@@ -74,3 +74,11 @@ Steel = Material(7.85*10**-6, 21000)
 class TMatrix:
     def __init__(self, do, di, l, rho, E=21000):
         self.shape = RoundBar(do, di, l, rho, E)
+
+    @property
+    def f_matrix(self):
+        pass
+
+    @property
+    def p_in(self):
+        pass
