@@ -72,13 +72,30 @@ Steel = Material(7.85*10**-6, 21000)
 
 
 class TMatrix:
+
+    l, m, E, I, Id, Ip, omg, lmd = sympy.symbols(r'l m E I I_d I_p \omega \lambda')
+    matrix = sympy.Matrix([
+        [1, l, l ** 2 / (2 * E * I), l ** 3 / (6 * E * I), 0, 0, 0, 0],
+        [0, 1, l / (E * I), l ** 2 / (2 * E * I), 0, 0, 0, 0],
+        [0, 0, 1, l, 0, 0, 0, 0],
+        [0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, l, l ** 2 / (2 * E * I), l ** 3 / (6 * E * I)],
+        [0, 0, 0, 0, 0, 1, l / (E * I), l ** 2 / (2 * E * I)],
+        [0, 0, 0, 0, 0, 0, 1, l],
+        [0, 0, 0, 0, 0, 0, 0, 1]
+    ])
+
     def __init__(self, do, di, l, rho, E=21000):
         self.shape = RoundBar(do, di, l, rho, E)
 
     @property
     def f_matrix(self):
-        pass
+        return TMatrix.matrix.subs([
+            (TMatrix.l, self.shape.l),
+            (TMatrix.E, self.shape.material.E),
+            (TMatrix.I, self.shape.section.I)
+        ])
 
     @property
     def p_in(self):
-        pass
+        return self.shape.mass, self.shape.Ip, self.shape.Id
