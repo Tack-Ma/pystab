@@ -207,3 +207,7 @@ class LateralVibration:
             (LateralVibration.E, i.shape.material.E),
             (LateralVibration.I, i.shape.section.I)
         ]) for i in self.shape]
+
+    # TODO: 自由振動の固有振動数を求める
+    def solve_free_vibration(self):
+        pass
