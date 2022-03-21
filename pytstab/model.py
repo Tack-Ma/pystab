@@ -86,6 +86,22 @@ class Bearing(RoundBar):
     def kyy(self):
         return self.k[3]
 
+    @property
+    def cxx(self):
+        return self.c[0]
+
+    @property
+    def cxy(self):
+        return self.c[1]
+
+    @property
+    def cyx(self):
+        return self.c[2]
+
+    @property
+    def cyy(self):
+        return self.c[3]
+
 
 class Material:
     def __init__(self, rho, E):
@@ -142,11 +158,20 @@ class LateralVibration:
         self.shape = model
         # self.shape = RoundBar(do, di, l, rho, E)
 
-    # TODO: シャフトの場合と軸受の場合の変換関数が必要
+    # シャフトの場合と軸受の場合の変換関数
     @staticmethod
     def f_matrix_pattern(param):
         if type(param) is Bearing:
-            pass
+            return LateralVibration.bearing_matrix.subs([
+                (LateralVibration.kxx, param.kxx),
+                (LateralVibration.kxy, param.kxy),
+                (LateralVibration.kyx, param.kyx),
+                (LateralVibration.kyy, param.kyy),
+                (LateralVibration.cxx, param.cxx),
+                (LateralVibration.cxy, param.cxy),
+                (LateralVibration.cyx, param.cyx),
+                (LateralVibration.cyy, param.cyy)
+            ])
         if type(param) is RoundBar:
             return LateralVibration.stiffness_matrix.subs([
                     (LateralVibration.l, param.l),
@@ -172,6 +197,7 @@ class LateralVibration:
             return None
         return numpy.array(self.mass_list)
 
+    # TODO: 質点マトリクスの定義
     @property
     def p_matrix(self):
         if self.shape is None:
