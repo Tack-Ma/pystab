@@ -219,6 +219,10 @@ class LateralVibration:
         new_tmp_array = tmp_array[:-1]/2+tmp_array[1:]/2
         return [self.p_matrix_param(i) for i in new_tmp_array.tolist()]
 
+    @property
+    def t_matrix(self):
+        return [f*p for f, p in zip(self.f_matrix, self.p_matrix[1:])]
+
     # TODO: 自由振動の固有振動数を求める
     def solve_free_vibration(self):
         pass
