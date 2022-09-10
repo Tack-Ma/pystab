@@ -25,22 +25,22 @@ class Circle:
 
 
 class RoundBar:
-    def __init__(self, do, di, l, rho, E=21000):
+    def __init__(self, do, di, l, rho, E=21000.0):
         self.section = Circle(do, di)
-        self.l = l
+        self.length = l
         self.material = Material(rho, E)
 
     @property
     def volume(self):
-        return self.section.area * self.l
+        return self.section.area * self.length
 
     @property
     def volume_o(self):
-        return self.section.area_o * self.l
+        return self.section.area_o * self.length
 
     @property
     def volume_i(self):
-        return self.section.area_i * self.l
+        return self.section.area_i * self.length
 
     @property
     def mass(self):
@@ -60,7 +60,7 @@ class RoundBar:
 
     @property
     def Id(self):
-        return (self.mass_o - self.mass_i) * self.l ** 2 / 3
+        return (self.mass_o - self.mass_i) * self.length ** 2 / 3
 
 
 class Bearing(RoundBar):
@@ -225,4 +225,8 @@ class LateralVibration:
 
     # TODO: 自由振動の固有振動数を求める
     def solve_free_vibration(self):
+        pass
+
+class Material:
+    def __init__(self, unit):
         pass
