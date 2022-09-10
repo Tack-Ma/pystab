@@ -4,30 +4,68 @@ import sympy
 
 class Circle:
     def __init__(self, do, di):
+        """
+
+        Parameters
+        ----------
+        do : float
+            円の外径
+        di : float
+            円の内径
+        """
         self.do = do
         self.di = di
 
     @property
     def area(self):
+        """
+
+        Returns
+        -------
+        area : float
+            断面積
+        """
         return sympy.pi / 4 * (self.do ** 2 - self.di ** 2)
 
     @property
     def area_o(self):
+        """
+
+        Returns
+        -------
+        area_of_outer_circle : float
+            外径円の面積
+        """
         return sympy.pi / 4 * self.do ** 2
 
     @property
     def area_i(self):
+        """
+
+        Returns
+        -------
+        area_of_internal_circle : float
+            内径円の面積
+
+        """
         return sympy.pi / 4 * self.di ** 2
 
     @property
     def I(self):
+        """
+
+        Returns
+        -------
+        断面2次モーメント : float
+
+        """
         return sympy.pi / 64 * (self.do ** 4 - self.di ** 4)
 
 
 class RoundBar:
-    def __init__(self, do, di, l, rho, E=21000.0):
+    def __init__(self, do, di, length, rho, E=21000.0):
         self.section = Circle(do, di)
-        self.length = l
+        self.length = length
         self.material = Material(rho, E)
 
     @property
@@ -64,10 +102,24 @@ class RoundBar:
 
 
 class Bearing(RoundBar):
-    """軸受の定義
-    :parameter
     """
-    def __init__(self, do, di, k, c):
+    軸受の定義
+
+    """
+    def __init__(self, do, di, k: list, c: list):
+        """
+
+        Parameters
+        ----------
+        do : float
+            Journal outer diameter
+        di : float
+            Journal inter diameter
+        k : list
+            spring parameter list (xx, xy, yx, yy)
+        c : list
+            damping parameter list (xx, xy, yx, yy)
+        """
         super().__init__(do, di, 0, 0)
         self.k = k
         self.c = c
@@ -106,11 +158,55 @@ class Bearing(RoundBar):
 
 
 class Material:
-    def __init__(self, rho, E):
+    """
+    材料ライブラリクラス
+
+    Attributes
+    ----------
+    rho : float
+        材料の密度
+    E : float
+        材料の縦弾性係数
+
+    """
+    def __init__(self, rho: float, E: float):
+        """
+
+        Parameters
+        ----------
+        rho : float
+            材料の密度
+        E : float
+            材料の縦弾性係数
+        """
         self.rho = rho
         self.E = E
 
 
+class MaterialLibrary(Material):
+    """
+    Materialクラスの材料データをJSONファイルから取得する
+
+
+    Attributes
+    ----------
+    """
+
+    def __init__(self, material_name, library_database):
+        """
+        Parameters
+        ----------
+        material_name : str
+            材料名称
+        library_database : str
+            材料ライブラリのパス
+        """
+        # super().__init__()
+        pass
+
+
+# 材料のライブラリ
+# TODO: JSONデータ化する
 Steel = Material(7.85 * 10 ** -6, 21000)
 
 
@@ -227,6 +323,3 @@ class LateralVibration:
     def solve_free_vibration(self):
         pass
 
-class Material:
-    def __init__(self, unit):
-        pass
