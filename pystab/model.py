@@ -3,6 +3,16 @@ import sympy
 
 
 class Circle:
+    """
+    円断面の材料力学上の属性を求めるクラス
+
+    Attributes
+    ----------
+    do : float
+        円の外径
+    di : float
+        円の内径
+    """
     def __init__(self, do, di):
         """
 
@@ -56,7 +66,8 @@ class Circle:
 
         Returns
         -------
-        断面2次モーメント : float
+        area_moment_of_inertia : float
+            断面2次モーメント
 
         """
         return sympy.pi / 64 * (self.do ** 4 - self.di ** 4)
@@ -99,6 +110,17 @@ class RoundBar:
     @property
     def Id(self):
         return (self.mass_o - self.mass_i) * self.length ** 2 / 3
+
+
+class Shaft(RoundBar):
+
+    def __init__(self, do, di, length, rho, E=21000.0, add_weight=0):
+        super().__init__(do, di, length, rho, E)
+        self.add_weight = add_weight
+
+    @property
+    def mass(self):
+        return self.volume * self.material.rho + self.add_weight
 
 
 class Bearing(RoundBar):
@@ -251,13 +273,25 @@ class LateralVibration:
 
     # TODO: 初期化方法直したい
     #     def __init__(self, do, di, l, rho, E=21000)
-    def __init__(self, model=None):
-        self.shape = model
+    def __init__(self):
+        self.shape = ()
         # self.shape = RoundBar(do, di, l, rho, E)
 
-    # シャフトの場合と軸受の場合の変換関数
     @staticmethod
     def f_matrix_pattern(param):
+        """
+        シャフトの場合と軸受の場合の変換関数
+
+        Parameters
+        ----------
+        param :
+            Shaft or Bearing class
+        Returns
+        -------
+        Matrix : sympy
+            f matrix
+
+        """
         if type(param) is Bearing:
             return LateralVibration.bearing_matrix.subs([
                 (LateralVibration.kxx, param.kxx),
@@ -269,7 +303,7 @@ class LateralVibration:
                 (LateralVibration.cyx, param.cyx),
                 (LateralVibration.cyy, param.cyy)
             ])
-        if type(param) is RoundBar:
+        if type(param) is Shaft:
             return LateralVibration.stiffness_matrix.subs([
                 (LateralVibration.l, param.l),
                 (LateralVibration.E, param.material.E),
